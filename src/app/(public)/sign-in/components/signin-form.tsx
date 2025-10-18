@@ -21,59 +21,36 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export function RegisterForm() {
+export function SigninForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Crie sua conta</CardTitle>
-          <CardDescription>Busque vagas de emprego</CardDescription>
+          <CardTitle className="text-xl">Entrar</CardTitle>
+          <CardDescription>Faça login na sua conta</CardDescription>
         </CardHeader>
         <CardContent>
           <form>
             <FieldGroup className="gap-3">
               <Field className="gap-2">
-                <FieldLabel htmlFor="name">
-                  Nome Completo{" "}
-                  <span className="text-red-500" aria-hidden>
-                    *
-                  </span>
-                </FieldLabel>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Thiago Pereira"
-                  required
-                />
-              </Field>
-              <Field className="gap-2">
                 <FieldLabel htmlFor="username">
-                  Nome de Usuário{" "}
+                  Nome de Usuário
                   <span className="text-red-500" aria-hidden>
                     *
                   </span>
                 </FieldLabel>
                 <Input
                   id="username"
-                  type="text"
-                  placeholder="thiagopereira"
+                  type="username"
+                  placeholder="username"
                   required
-                />
-              </Field>
-              <Field className="gap-2">
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="thiago.pereira@teste.com"
                 />
               </Field>
               <Field className="gap-2">
@@ -101,24 +78,9 @@ export function RegisterForm() {
                 </InputGroup>
               </Field>
               <Field className="gap-2">
-                <FieldLabel htmlFor="phone">Telefone</FieldLabel>
-                <Input id="phone" type="tel" placeholder="(42) 91234-5678" />
-              </Field>
-              <Field className="gap-2">
-                <FieldLabel htmlFor="experience">Experiência</FieldLabel>
-                <Textarea
-                  id="experience"
-                  placeholder="Descreva sua experiência"
-                />
-              </Field>
-              <Field className="gap-2">
-                <FieldLabel htmlFor="education">Educação</FieldLabel>
-                <Textarea id="education" placeholder="Descreva sua educação" />
-              </Field>
-              <Field>
-                <Button type="submit">Cadastrar</Button>
+                <Button type="submit">Login</Button>
                 <FieldDescription className="text-center">
-                  Já tem uma conta? <Link href="/sign-in">Entrar</Link>
+                  Não tem uma conta? <Link href="/register">Cadastrar</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
