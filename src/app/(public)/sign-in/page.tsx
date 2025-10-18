@@ -1,5 +1,10 @@
 import { Briefcase } from "lucide-react";
+import { Metadata } from "next";
 import { SigninForm } from "./components/signin-form";
+
+export const metadata: Metadata = {
+  title: "Entrar - Empregos",
+};
 
 export default function SigninPage() {
   return (

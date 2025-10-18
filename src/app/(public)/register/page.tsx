@@ -1,5 +1,10 @@
 import { Briefcase } from "lucide-react";
+import { Metadata } from "next";
 import { RegisterForm } from "./components/register-form";
+
+export const metadata: Metadata = {
+  title: "Criar conta - Empregos",
+};
 
 export default function RegisterPage() {
   return (
