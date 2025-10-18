@@ -14,6 +14,7 @@ import { CircleUser, EllipsisVertical, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Spinner } from "./ui/spinner";
 
 export function NavUser({
@@ -32,10 +33,16 @@ export function NavUser({
 
     try {
       await logout();
+
+      toast.success("Logout realizado com sucesso!");
+
       router.push("/sign-in");
       router.refresh();
     } catch (error) {
       console.error("Logout error:", error);
+
+      toast.error("Erro ao fazer logout");
+
       router.push("/sign-in");
       router.refresh();
     } finally {

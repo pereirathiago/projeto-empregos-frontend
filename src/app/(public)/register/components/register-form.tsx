@@ -31,6 +31,7 @@ import { Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface ApiErrorResponse {
   message: string;
@@ -57,7 +58,6 @@ export function RegisterForm() {
   >({});
 
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string>("");
   const router = useRouter();
 
   const handleChange = (
@@ -74,7 +74,6 @@ export function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
-    setApiError("");
     setIsLoading(true);
 
     const validation = registerSchema.safeParse(formData);
@@ -92,6 +91,9 @@ export function RegisterForm() {
 
     try {
       await api.post("/users", formData);
+
+      toast.success("Conta criada com sucesso! Faça login para continuar.");
+
       router.push("/sign-in");
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
@@ -105,11 +107,14 @@ export function RegisterForm() {
             fieldErrors[field] = detail.error;
           });
           setErrors(fieldErrors);
+          toast.error("Erro ao criar conta. Verifique os campos.");
+        } else {
+          const message = errorData.message || "Erro ao criar conta";
+          toast.error(message);
         }
-
-        setApiError(errorData.message || "Erro ao criar conta");
       } else {
-        setApiError("Erro ao criar conta. Tente novamente.");
+        const message = "Erro ao criar conta. Tente novamente.";
+        toast.error(message);
       }
     } finally {
       setIsLoading(false);
@@ -126,11 +131,6 @@ export function RegisterForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup className="gap-3">
-              {apiError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-                  {apiError}
-                </div>
-              )}
               <Field className="gap-2">
                 <FieldLabel htmlFor="name">
                   Nome Completo{" "}

@@ -31,6 +31,7 @@ import { Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface ApiErrorResponse {
   message: string;
@@ -51,7 +52,6 @@ export function SigninForm() {
     Partial<Record<keyof LoginFormData, string>>
   >({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string>("");
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +66,6 @@ export function SigninForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
-    setApiError("");
     setIsLoading(true);
 
     const validation = loginSchema.safeParse(formData);
@@ -90,6 +89,8 @@ export function SigninForm() {
 
       setAuthToken(response.data.token);
 
+      toast.success("Login realizado com sucesso!");
+
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -103,11 +104,14 @@ export function SigninForm() {
             fieldErrors[field] = detail.error;
           });
           setErrors(fieldErrors);
+          toast.error("Erro ao fazer login. Verifique os campos.");
+        } else {
+          const message = errorData.message || "Erro ao fazer login";
+          toast.error(message);
         }
-
-        setApiError(errorData.message || "Erro ao fazer login");
       } else {
-        setApiError("Erro ao fazer login. Tente novamente.");
+        const message = "Erro ao fazer login. Tente novamente.";
+        toast.error(message);
       }
     } finally {
       setIsLoading(false);
@@ -124,11 +128,6 @@ export function SigninForm() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup className="gap-3">
-              {apiError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-                  {apiError}
-                </div>
-              )}
               <Field className="gap-2">
                 <FieldLabel htmlFor="username">
                   Nome de Usuário

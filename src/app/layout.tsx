@@ -1,5 +1,6 @@
 import { ModeToggle } from "@/components/ModeToggle";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -25,7 +26,10 @@ export default function RootLayout({
           <div className="fixed bottom-4 right-4">
             <ModeToggle />
           </div>
+
           {children}
+
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

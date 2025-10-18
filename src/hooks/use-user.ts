@@ -4,6 +4,7 @@ import { fetchCurrentUser, removeAuthToken, type User } from "@/lib/auth";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface UseUserReturn {
   user: User | null;
@@ -33,21 +34,29 @@ export function useUser(): UseUserReturn {
         const errorData = err.response?.data as ApiErrorResponse;
 
         if (err.status === 401 || err.status === 403) {
-          router.push("/sign-in");
+          toast.error("Sessão expirada. Faça login novamente.");
           removeAuthToken();
+          router.push("/sign-in");
           return;
         }
 
         if (err.status === 404) {
-          setError("Usuário não encontrado");
+          const message = "Usuário não encontrado";
+          setError(message);
+          toast.error(message);
           return;
         }
 
-        setError(errorData?.message || "Erro ao buscar dados do usuário");
+        const message = errorData?.message || "Erro ao buscar dados do usuário";
+        setError(message);
+        toast.error(message);
       } else if (err instanceof Error) {
         setError(err.message);
+        toast.error(err.message);
       } else {
-        setError("Erro ao buscar dados do usuário");
+        const message = "Erro ao buscar dados do usuário";
+        setError(message);
+        toast.error(message);
       }
     } finally {
       setIsLoading(false);
