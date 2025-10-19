@@ -67,13 +67,8 @@ export function getUserId(): string | null {
 }
 
 export async function logout(): Promise<void> {
-  try {
-    await api.post("/logout");
-  } catch (error) {
-    console.error("Error during logout:", error);
-  } finally {
-    removeAuthToken();
-  }
+  await api.post("/logout");
+  removeAuthToken();
 }
 
 export async function fetchCurrentUser(): Promise<User> {
@@ -104,4 +99,15 @@ export async function updateUser(data: UpdateUserData): Promise<void> {
   }
 
   await api.patch(`/users/${userId}`, data);
+}
+
+export async function deleteUser(): Promise<{ message: string }> {
+  const userId = getUserId();
+
+  if (!userId) {
+    throw new Error("No user ID found");
+  }
+
+  const response = await api.delete<{ message: string }>(`/users/${userId}`);
+  return response.data;
 }

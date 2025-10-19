@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +20,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { useUser } from "@/hooks/use-user";
+import { deleteUser, removeAuthToken } from "@/lib/auth";
+import { useUserStore } from "@/store/user-store";
+import { AxiosError } from "axios";
 import {
   AtSign,
   Briefcase,
@@ -17,12 +32,71 @@ import {
   GraduationCap,
   Mail,
   Phone,
+  Trash2,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
+interface ApiErrorResponse {
+  message: string;
+}
 
 export default function ProfilePage() {
   const { user, isLoading } = useUser();
+  const { clearUser } = useUserStore();
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteUser = async () => {
+    setIsDeleting(true);
+
+    try {
+      const response = await deleteUser();
+
+      toast.success(response.message || "Usuário deletado com sucesso!");
+
+      removeAuthToken();
+      clearUser();
+
+      router.push("/sign-in");
+      router.refresh();
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        const errorData = error.response.data as ApiErrorResponse;
+
+        if (error.response.status === 401) {
+          toast.error("Sessão expirada. Faça login novamente.");
+          removeAuthToken();
+          clearUser();
+          router.push("/sign-in");
+          return;
+        }
+
+        if (error.response.status === 403) {
+          toast.error(
+            errorData.message ||
+              "Você não tem permissão para realizar esta ação."
+          );
+          return;
+        }
+
+        if (error.response.status === 404) {
+          toast.error(errorData.message || "Usuário não encontrado.");
+          return;
+        }
+
+        const message = errorData.message || "Erro ao deletar usuário";
+        toast.error(message);
+      } else {
+        toast.error("Erro ao deletar usuário. Tente novamente.");
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -216,6 +290,47 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-full border-destructive mt-4">
+          <CardHeader>
+            <CardTitle className="text-destructive">Perigo</CardTitle>
+            <CardDescription>
+              Ações irreversíveis relacionadas à sua conta
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" disabled={isDeleting}>
+                  {isDeleting ? (
+                    <Spinner />
+                  ) : (
+                    <Trash2 className="mr-2 h-4 w-4" />
+                  )}
+                  {isDeleting ? "Deletando..." : "Deletar Conta"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita. Isso irá deletar
+                    permanentemente sua conta.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteUser}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Deletar Conta
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
       </div>
