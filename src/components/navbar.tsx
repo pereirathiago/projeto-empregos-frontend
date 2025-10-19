@@ -14,7 +14,7 @@ export function Navbar() {
     <nav className="border-border flex justify-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 ">
         <Link href="/">
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
             <House className="h-5 w-5" />
             <span className="hidden sm:inline">Vagas</span>
           </Button>

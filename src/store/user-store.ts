@@ -9,6 +9,7 @@ interface UserStore {
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   clearUser: () => void;
+  updateUserData: (userData: Partial<User>) => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -19,4 +20,8 @@ export const useUserStore = create<UserStore>((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   clearUser: () => set({ user: null, error: null, isLoading: false }),
+  updateUserData: (userData) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, ...userData } : null,
+    })),
 }));

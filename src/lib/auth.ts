@@ -86,3 +86,22 @@ export async function fetchCurrentUser(): Promise<User> {
   const response = await api.get<User>(`/users/${userId}`);
   return response.data;
 }
+
+export interface UpdateUserData {
+  name: string;
+  email?: string;
+  password: string;
+  phone?: string;
+  experience?: string;
+  education?: string;
+}
+
+export async function updateUser(data: UpdateUserData): Promise<void> {
+  const userId = getUserId();
+
+  if (!userId) {
+    throw new Error("No user ID found");
+  }
+
+  await api.patch(`/users/${userId}`, data);
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,13 +11,15 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/hooks/use-user";
 import {
+  AtSign,
   Briefcase,
+  Edit,
   GraduationCap,
-  Info,
   Mail,
   Phone,
   UserCircle,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { user, isLoading } = useUser();
@@ -94,13 +97,20 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6 flex flex-col w-full items-center">
-      <div className="w-full max-w-xl pl-3">
-        <h1 className="text-balance text-3xl font-bold tracking-tight">
-          Perfil do Usuário
-        </h1>
-        <p className="text-muted-foreground text-balance">
-          Visualize e gerencie suas informações pessoais
-        </p>
+      <div className="w-full max-w-xl pl-3 flex items-center justify-between">
+        <div>
+          <h1 className="text-balance text-3xl font-bold tracking-tight">
+            Perfil do Usuário
+          </h1>
+          <p className="text-muted-foreground text-balance">
+            Visualize e gerencie suas informações pessoais
+          </p>
+        </div>
+        <Link href="/profile/edit">
+          <Button variant="outline" className="cursor-pointer">
+            <Edit className="mr-2 h-4 w-4" /> Editar Perfil
+          </Button>
+        </Link>
       </div>
 
       <div className="w-full max-w-xl">
@@ -114,15 +124,22 @@ export default function ProfilePage() {
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Informações Básicas</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
-                    <Info className="text-muted-foreground h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-sm">{user.name}</p>
-                    <p className="font-medium">@{user.username}</p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
+                  <UserCircle className="text-muted-foreground h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-sm">Nome</p>
+                  <p className="font-medium">{user.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
+                  <AtSign className="text-muted-foreground h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-sm">Username</p>
+                  <p className="font-medium">@{user.username}</p>
                 </div>
               </div>
             </div>
@@ -159,15 +176,6 @@ export default function ProfilePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
-                    <UserCircle className="text-muted-foreground h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-sm">Username</p>
-                    <p className="font-medium">@{user.username}</p>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -182,7 +190,11 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-muted-foreground text-sm">Experiência</p>
-                    <p className="text-muted-foreground font-medium">
+                    <p
+                      className={`font-medium ${
+                        user.experience ? "" : "text-muted-foreground"
+                      }`}
+                    >
                       {user.experience || "Não informado"}
                     </p>
                   </div>
@@ -193,7 +205,11 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-muted-foreground text-sm">Educação</p>
-                    <p className="text-muted-foreground font-medium">
+                    <p
+                      className={`font-medium ${
+                        user.education ? "" : "text-muted-foreground"
+                      }`}
+                    >
                       {user.education || "Não informado"}
                     </p>
                   </div>
