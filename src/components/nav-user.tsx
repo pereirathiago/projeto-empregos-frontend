@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/lib/auth";
+import { useUserStore } from "@/store/user-store";
 import { CircleUser, EllipsisVertical, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,6 +27,7 @@ export function NavUser({
   };
 }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { clearUser } = useUserStore();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -35,6 +37,7 @@ export function NavUser({
       await logout();
 
       toast.success("Logout realizado com sucesso!");
+      clearUser();
 
       router.push("/sign-in");
       router.refresh();
@@ -42,6 +45,7 @@ export function NavUser({
       console.error("Logout error:", error);
 
       toast.error("Erro ao fazer logout");
+      clearUser();
 
       router.push("/sign-in");
       router.refresh();

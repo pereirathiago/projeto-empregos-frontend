@@ -1,31 +1,26 @@
 "use client";
 
-import { fetchCurrentUser, removeAuthToken, type User } from "@/lib/auth";
+import { fetchCurrentUser, removeAuthToken } from "@/lib/auth";
+import { useUserStore } from "@/store/user-store";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-
-interface UseUserReturn {
-  user: User | null;
-  isLoading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-}
 
 interface ApiErrorResponse {
   message: string;
 }
 
-export function useUser(): UseUserReturn {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function useUser() {
+  const { user, isLoading, error, setUser, setLoading, setError, clearUser } =
+    useUserStore();
   const router = useRouter();
 
   const fetchUser = async () => {
+    if (user) return;
+
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
       const userData = await fetchCurrentUser();
       setUser(userData);
@@ -34,8 +29,10 @@ export function useUser(): UseUserReturn {
         const errorData = err.response?.data as ApiErrorResponse;
 
         if (err.status === 401 || err.status === 403) {
-          toast.error("Sessão expirada. Faça login novamente.");
+          const message = "Sessão expirada. Faça login novamente.";
+          toast.error(message);
           removeAuthToken();
+          clearUser();
           router.push("/sign-in");
           return;
         }
@@ -59,7 +56,7 @@ export function useUser(): UseUserReturn {
         toast.error(message);
       }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
