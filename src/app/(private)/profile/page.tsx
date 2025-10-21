@@ -303,7 +303,11 @@ export default function ProfilePage() {
           <CardContent>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive" disabled={isDeleting}>
+                <Button
+                  variant="destructive"
+                  disabled={isDeleting}
+                  className="cursor-pointer"
+                >
                   {isDeleting ? (
                     <Spinner />
                   ) : (
@@ -321,10 +325,12 @@ export default function ProfilePage() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogCancel className="cursor-pointer">
+                    Cancelar
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDeleteUser}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    className="bg-destructive cursor-pointer text-destructive-foreground hover:bg-destructive/90"
                   >
                     Deletar Conta
                   </AlertDialogAction>

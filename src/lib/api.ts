@@ -1,16 +1,37 @@
-import { useApiStore } from "@/store/api-store";
 import axios from "axios";
 
+const STORAGE_KEY = "api_base_url";
+
+export function getBaseURL(): string {
+  if (typeof window === "undefined") {
+    return process.env.NEXT_PUBLIC_API_URL || "";
+  }
+
+  const storedURL = localStorage.getItem(STORAGE_KEY);
+  if (storedURL) {
+    return storedURL;
+  }
+
+  const envURL = process.env.NEXT_PUBLIC_API_URL || "";
+  if (envURL) {
+    localStorage.setItem(STORAGE_KEY, envURL);
+  }
+  return envURL;
+}
+
+export function setBaseURL(url: string): void {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, url);
+  }
+}
+
 const api = axios.create({
-  //baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: { "Content-Type": "application/json" },
 });
 
 api.interceptors.request.use(
   (config) => {
-    const currentBaseURL =
-      useApiStore.getState().ip_port || process.env.NEXT_PUBLIC_API_URL;
-    config.baseURL = currentBaseURL;
+    config.baseURL = getBaseURL();
 
     if (typeof document !== "undefined") {
       const cookies = document.cookie.split(";");

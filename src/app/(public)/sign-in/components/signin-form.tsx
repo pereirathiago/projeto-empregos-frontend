@@ -180,7 +180,7 @@ export function SigninForm() {
                 )}
               </Field>
               <Field className="gap-2">
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="cursor-pointer">
                   {isLoading && <Spinner />}
                   {isLoading ? "Entrando..." : "Login"}
                 </Button>

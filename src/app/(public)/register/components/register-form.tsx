@@ -207,6 +207,7 @@ export function RegisterForm() {
                       onClick={() => setShowPassword(!showPassword)}
                       size="icon-xs"
                       type="button"
+                      className="cursor-pointer"
                     >
                       {showPassword ? <Eye /> : <EyeClosed />}
                     </InputGroupButton>
@@ -258,7 +259,11 @@ export function RegisterForm() {
               </Field>
 
               <Field>
-                <Button type="submit" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="cursor-pointer"
+                >
                   {isLoading && <Spinner />}
                   {isLoading ? "Cadastrando..." : "Cadastrar"}
                 </Button>

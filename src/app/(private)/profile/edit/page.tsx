@@ -290,6 +290,7 @@ export default function EditProfilePage() {
                         onClick={() => setShowPassword(!showPassword)}
                         size="icon-xs"
                         type="button"
+                        className="cursor-pointer"
                       >
                         {showPassword ? <Eye /> : <EyeClosed />}
                       </InputGroupButton>
@@ -340,11 +341,11 @@ export default function EditProfilePage() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button type="submit" disabled={isSaving} className="flex-1">
+                <Button type="submit" disabled={isSaving} className="flex-1 cursor-pointer">
                   {isSaving ? <Spinner /> : <Save className="mr-2 h-4 w-4" />}
                   {isSaving ? "Salvando..." : "Salvar Alterações"}
                 </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>
+                <Button type="button" variant="outline" onClick={handleCancel} className="cursor-pointer">
                   <X className="mr-2 h-4 w-4" />
                   Cancelar
                 </Button>

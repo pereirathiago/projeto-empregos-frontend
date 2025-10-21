@@ -1,7 +1,8 @@
 "use client";
 
-import { useApiStore } from "@/store/api-store";
+import { getBaseURL, setBaseURL } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -20,54 +21,66 @@ import { Label } from "./ui/label";
  * Esse componente é apenas um requisito para a avaliação, não deve ser usado em outros contextos.
  */
 export function IpPortAPI() {
-  const { ip_port, setIpPort } = useApiStore();
-  const [localIpPort, setLocalIpPort] = useState(ip_port);
+  const [localIpPort, setLocalIpPort] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    setLocalIpPort(ip_port);
-  }, [ip_port]);
+    setLocalIpPort(getBaseURL());
+  }, [isOpen]);
 
   const handleSubmit = () => {
-    setIpPort(localIpPort);
+    if (!localIpPort.trim()) {
+      toast.error("Por favor, informe um endereço válido");
+      return;
+    }
+
+    setBaseURL(localIpPort);
+    toast.success("Endereço do servidor atualizado com sucesso!");
+    setIsOpen(false);
   };
 
   return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="outline">Servidor</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Configurações do Servidor</DialogTitle>
-            <DialogDescription>
-              Altere as configurações do servidor aqui. Clique em salvar quando
-              terminar.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="ipport">IP e Porta</Label>
-              <Input
-                id="ipport"
-                name="ipport"
-                defaultValue={localIpPort}
-                onChange={(e) => setLocalIpPort(e.target.value)}
-              />
-            </div>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="cursor-pointer">
+          Servidor
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Configurações do Servidor</DialogTitle>
+          <DialogDescription>
+            Altere as configurações do servidor aqui. Clique em salvar quando
+            terminar.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <div className="grid gap-3">
+            <Label htmlFor="ipport">IP e Porta</Label>
+            <Input
+              id="ipport"
+              name="ipport"
+              value={localIpPort}
+              onChange={(e) => setLocalIpPort(e.target.value)}
+              placeholder="http://localhost:3000"
+            />
           </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancelar</Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button type="submit" onClick={handleSubmit}>
-                Salvar alterações
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline" className="cursor-pointer">
+              Cancelar
+            </Button>
+          </DialogClose>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            className="cursor-pointer"
+          >
+            Salvar alterações
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

@@ -57,7 +57,7 @@ export function NavUser({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 gap-2 px-2">
+        <Button variant="ghost" className="relative h-10 gap-2 px-2 cursor-pointer">
           <Avatar className="h-8 w-8 rounded-lg">
             <AvatarFallback className="rounded-lg">
               {user.name
