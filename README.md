@@ -1,34 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema de Busca e Oferta de Empregos - Frontend
 
-## Getting Started
+Projeto desenvolvido para a disciplina **Tecnologias Cliente Servidor** do curso **Análise e Desenvolvimento de Sistemas - UTFPR**
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![ShadcnUI](https://img.shields.io/badge/shadcn%2Fui-000?logo=shadcnui&logoColor=fff&style=for-the-badge)
+
+## 📋 Sumário
+
+- [Sistema de Busca e Oferta de Empregos - Frontend](#sistema-de-busca-e-oferta-de-empregos---frontend)
+  - [📋 Sumário](#-sumário)
+  - [🎯 Sobre o Projeto](#-sobre-o-projeto)
+  - [🚀 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+  - [📦 Pré-requisitos](#-pré-requisitos)
+  - [🚀 Executando o Projeto](#-executando-o-projeto)
+    - [1. Clone o repositório](#1-clone-o-repositório)
+    - [2. Instale as dependências](#2-instale-as-dependências)
+    - [3. Configure as variáveis de ambiente](#3-configure-as-variáveis-de-ambiente)
+    - [4. Execute o projeto em desenvolvimento](#4-execute-o-projeto-em-desenvolvimento)
+    - [5. Acesse a aplicação](#5-acesse-a-aplicação)
+    - [Compilar para produção](#compilar-para-produção)
+  - [📱 Configuração do Servidor](#-configuração-do-servidor)
+  - [📝 Licença](#-licença)
+
+---
+
+## 🎯 Sobre o Projeto
+
+Frontend desenvolvido com **Next.js** e **React** para gerenciamento de autenticação e perfil de usuários. O sistema consome a API de backend desenvolvida em Express/Node.js e fornece uma interface intuitiva para cadastro, login, edição de perfil e gerenciamento de conta.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- TailwindCSS
+- Shadcn/ui
+- Zustand
+- Zod
+
+---
+
+## 📦 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
+
+- **Node.js** (versão 20 ou superior)
+- **npm**, **yarn**, **pnpm**
+- **Git**
+
+---
+
+## 🚀 Executando o Projeto
+
+### 1. Clone o repositório
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/pereirathiago/projeto-empregos-frontend.git
+
+cd projeto-empregos-frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Instale as dependências
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Escolha seu gerenciador de pacotes:
 
-## Learn More
+```bash
+# Usando npm
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# Usando yarn
+yarn install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Usando pnpm
+pnpm install
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. Configure as variáveis de ambiente
 
-## Deploy on Vercel
+Crie um arquivo `.env.local` na raiz do projeto:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3333
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Nota:** Substitua `http://localhost:3333` pela URL do seu servidor backend.
+
+### 4. Execute o projeto em desenvolvimento
+
+```bash
+# npm
+npm run dev
+
+# yarn
+yarn dev
+
+# pnpm
+pnpm dev
+```
+
+### 5. Acesse a aplicação
+
+Abra seu navegador e acesse:
+
+```
+http://localhost:3000
+```
+
+### Compilar para produção
+
+```bash
+# npm
+npm run build
+npm run start
+
+# yarn
+yarn build
+yarn start
+
+# pnpm
+pnpm build
+pnpm start
+```
+
+---
+
+## 📱 Configuração do Servidor
+
+Ao acessar o aplicativo, você pode configurar o endereço do servidor através do botão **"Servidor"**:
+
+1. Clique no botão **"Servidor"**
+2. Digite o endereço do seu backend (ex: `http://localhost:3000`)
+3. Clique em **"Salvar alterações"**
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+<div align="center">
+
+Desenvolvido com 💙 por Thiago Pereira
+
+</div>
