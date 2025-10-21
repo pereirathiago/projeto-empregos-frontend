@@ -87,12 +87,14 @@ export function SigninForm() {
         formData
       );
 
-      setAuthToken(response.data.token);
-
-      toast.success("Login realizado com sucesso!");
-
-      router.push("/");
-      router.refresh();
+      if (response.status === 200) {
+        setAuthToken(response.data.token);
+        toast.success("Login realizado com sucesso!");
+        router.push("/");
+        router.refresh();
+      } else {
+        toast.error("Erro ao fazer login");
+      }
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         const errorData = error.response.data as ApiErrorResponse;
@@ -110,8 +112,7 @@ export function SigninForm() {
           toast.error(message);
         }
       } else {
-        const message = "Erro ao fazer login. Tente novamente.";
-        toast.error(message);
+        toast.error("Erro ao fazer login. Tente novamente.");
       }
     } finally {
       setIsLoading(false);

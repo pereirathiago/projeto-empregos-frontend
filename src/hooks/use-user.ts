@@ -25,11 +25,18 @@ export function useUser() {
       const userData = await fetchCurrentUser();
       setUser(userData);
     } catch (err) {
-      if (err instanceof AxiosError) {
-        const errorData = err.response?.data as ApiErrorResponse;
+      if (err instanceof AxiosError && err.response) {
+        const errorData = err.response.data as ApiErrorResponse;
 
-        if (err.status === 401 || err.status === 403) {
-          const message = "Sessão expirada. Faça login novamente.";
+        if (
+          err.response.status === 401 ||
+          err.response.status === 404 ||
+          err.response.status === 403
+        ) {
+          const message =
+            err.response.status === 403
+              ? "Você não tem permissão para acessar este recurso."
+              : "Sessão expirada. Faça login novamente.";
           toast.error(message);
           removeAuthToken();
           clearUser();
@@ -37,19 +44,13 @@ export function useUser() {
           return;
         }
 
-        if (err.status === 404) {
-          const message = "Usuário não encontrado";
-          setError(message);
-          toast.error(message);
-          return;
-        }
-
-        const message = errorData?.message || "Erro ao buscar dados do usuário";
+        const message = errorData.message || "Erro ao buscar dados do usuário";
         setError(message);
         toast.error(message);
       } else if (err instanceof Error) {
-        setError(err.message);
-        toast.error(err.message);
+        const message = err.message || "Erro ao buscar dados do usuário";
+        setError(message);
+        toast.error(message);
       } else {
         const message = "Erro ao buscar dados do usuário";
         setError(message);

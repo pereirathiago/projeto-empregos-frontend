@@ -21,7 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/use-user";
-import { updateUser } from "@/lib/auth";
+import { removeAuthToken, updateUser } from "@/lib/auth";
 import {
   updateProfileSchema,
   type UpdateProfileFormData,
@@ -45,7 +45,7 @@ interface ApiErrorResponse {
 export default function EditProfilePage() {
   const router = useRouter();
   const { user } = useUser();
-  const { updateUserData } = useUserStore();
+  const { updateUserData, clearUser } = useUserStore();
 
   const [formData, setFormData] = useState<UpdateProfileFormData>({
     name: "",
@@ -124,19 +124,17 @@ export default function EditProfilePage() {
       if (error instanceof AxiosError && error.response) {
         const errorData = error.response.data as ApiErrorResponse;
 
-        if (error.response.status === 401) {
-          toast.error("Sessão expirada. Faça login novamente.");
+        if (error.response.status === 401 || error.response.status === 404) {
+          const message = "Sessão expirada. Faça login novamente.";
+          toast.error(message);
+          removeAuthToken();
+          clearUser();
           router.push("/sign-in");
           return;
         }
 
         if (error.response.status === 403) {
           toast.error("Você não tem permissão para realizar esta ação.");
-          return;
-        }
-
-        if (error.response.status === 404) {
-          toast.error("Usuário não encontrado.");
           return;
         }
 
@@ -161,8 +159,7 @@ export default function EditProfilePage() {
           toast.error(message);
         }
       } else {
-        const message = "Erro ao atualizar perfil. Tente novamente.";
-        toast.error(message);
+        toast.error("Erro ao atualizar perfil. Tente novamente.");
       }
     } finally {
       setIsSaving(false);

@@ -90,11 +90,16 @@ export function RegisterForm() {
     }
 
     try {
-      await api.post("/users", formData);
+      const response = await api.post("/users", formData);
 
-      toast.success("Conta criada com sucesso! Faça login para continuar.");
-
-      router.push("/sign-in");
+      if (response.status === 201) {
+        toast.success("Conta criada com sucesso! Faça login para continuar.");
+        router.push("/sign-in");
+      } else {
+        const errorData = response.data as ApiErrorResponse;
+        const message = errorData.message || "Erro ao criar conta";
+        toast.error(message);
+      }
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         const errorData = error.response.data as ApiErrorResponse;
@@ -113,8 +118,7 @@ export function RegisterForm() {
           toast.error(message);
         }
       } else {
-        const message = "Erro ao criar conta. Tente novamente.";
-        toast.error(message);
+        toast.error("Erro ao criar conta. Tente novamente.");
       }
     } finally {
       setIsLoading(false);

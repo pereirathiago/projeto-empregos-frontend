@@ -67,8 +67,13 @@ export function getUserId(): string | null {
 }
 
 export async function logout(): Promise<void> {
-  await api.post("/logout");
-  removeAuthToken();
+  try {
+    await api.post("/logout");
+    removeAuthToken();
+  } catch (error) {
+    console.error("Logout error:", error);
+    removeAuthToken();
+  }
 }
 
 export async function fetchCurrentUser(): Promise<User> {
@@ -109,5 +114,6 @@ export async function deleteUser(): Promise<{ message: string }> {
   }
 
   const response = await api.delete<{ message: string }>(`/users/${userId}`);
+
   return response.data;
 }

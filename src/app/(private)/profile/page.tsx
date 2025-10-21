@@ -67,8 +67,9 @@ export default function ProfilePage() {
       if (error instanceof AxiosError && error.response) {
         const errorData = error.response.data as ApiErrorResponse;
 
-        if (error.response.status === 401) {
-          toast.error("Sessão expirada. Faça login novamente.");
+        if (error.response.status === 401 || error.response.status === 404) {
+          const message = "Sessão expirada. Faça login novamente.";
+          toast.error(message);
           removeAuthToken();
           clearUser();
           router.push("/sign-in");
@@ -76,15 +77,7 @@ export default function ProfilePage() {
         }
 
         if (error.response.status === 403) {
-          toast.error(
-            errorData.message ||
-              "Você não tem permissão para realizar esta ação."
-          );
-          return;
-        }
-
-        if (error.response.status === 404) {
-          toast.error(errorData.message || "Usuário não encontrado.");
+          toast.error("Você não tem permissão para realizar esta ação.");
           return;
         }
 
