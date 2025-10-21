@@ -11,20 +11,13 @@ Projeto desenvolvido para a disciplina **Tecnologias Cliente Servidor** do curso
 
 ## 📋 Sumário
 
-- [Sistema de Busca e Oferta de Empregos - Frontend](#sistema-de-busca-e-oferta-de-empregos---frontend)
-  - [📋 Sumário](#-sumário)
-  - [🎯 Sobre o Projeto](#-sobre-o-projeto)
-  - [🚀 Tecnologias Utilizadas](#-tecnologias-utilizadas)
-  - [📦 Pré-requisitos](#-pré-requisitos)
-  - [🚀 Executando o Projeto](#-executando-o-projeto)
-    - [1. Clone o repositório](#1-clone-o-repositório)
-    - [2. Instale as dependências](#2-instale-as-dependências)
-    - [3. Configure as variáveis de ambiente](#3-configure-as-variáveis-de-ambiente)
-    - [4. Execute o projeto em desenvolvimento](#4-execute-o-projeto-em-desenvolvimento)
-    - [5. Acesse a aplicação](#5-acesse-a-aplicação)
-    - [Compilar para produção](#compilar-para-produção)
-  - [📱 Configuração do Servidor](#-configuração-do-servidor)
-  - [📝 Licença](#-licença)
+- [📋 Sumário](#-sumário)
+- [🎯 Sobre o Projeto](#-sobre-o-projeto)
+- [🚀 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [📦 Pré-requisitos](#-pré-requisitos)
+- [🚀 Executando o Projeto](#-executando-o-projeto)
+- [📱 Configuração do Servidor](#-configuração-do-servidor)
+- [📝 Licença](#-licença)
 
 ---
 
@@ -110,22 +103,6 @@ Abra seu navegador e acesse:
 
 ```
 http://localhost:3000
-```
-
-### Compilar para produção
-
-```bash
-# npm
-npm run build
-npm run start
-
-# yarn
-yarn build
-yarn start
-
-# pnpm
-pnpm build
-pnpm start
 ```
 
 ---
