@@ -10,7 +10,11 @@ interface JwtPayload {
 
 const publicRoutes = [
   { path: "/sign-in", whenAuthenticated: "redirect" },
+  { path: "/sign-in/user", whenAuthenticated: "redirect" },
+  { path: "/sign-in/company", whenAuthenticated: "redirect" },
   { path: "/register", whenAuthenticated: "redirect" },
+  { path: "/register/user", whenAuthenticated: "redirect" },
+  { path: "/register/company", whenAuthenticated: "redirect" },
 ] as const;
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/sign-in";
@@ -56,10 +60,58 @@ export function middleware(request: NextRequest) {
     }
 
     if (publicRoute && publicRoute.whenAuthenticated === "redirect") {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/";
+      try {
+        const decoded = jwtDecode<JwtPayload>(authToken);
+        const role = decoded.role;
 
-      return NextResponse.redirect(redirectUrl);
+        const redirectUrl = request.nextUrl.clone();
+
+        if (role === "company") {
+          redirectUrl.pathname = "/dashboard/company";
+        } else {
+          redirectUrl.pathname = "/dashboard/user";
+        }
+
+        return NextResponse.redirect(redirectUrl);
+      } catch (error) {
+        console.error("Error decoding token in redirect:", error);
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = "/";
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
+
+    if (path.startsWith("/dashboard/") || path.startsWith("/profile/")) {
+      try {
+        const decoded = jwtDecode<JwtPayload>(authToken);
+        const role = decoded.role;
+
+        if (path.includes("/company") && role !== "company") {
+          const redirectUrl = request.nextUrl.clone();
+          redirectUrl.pathname = "/dashboard/user";
+          return NextResponse.redirect(redirectUrl);
+        }
+
+        if (path.includes("/user") && role !== "user") {
+          const redirectUrl = request.nextUrl.clone();
+          redirectUrl.pathname = "/dashboard/company";
+          return NextResponse.redirect(redirectUrl);
+        }
+
+        if (path === "/dashboard" || path === "/profile") {
+          const redirectUrl = request.nextUrl.clone();
+
+          if (role === "company") {
+            redirectUrl.pathname = path + "/company";
+          } else {
+            redirectUrl.pathname = path + "/user";
+          }
+
+          return NextResponse.redirect(redirectUrl);
+        }
+      } catch (error) {
+        console.error("Error decoding token for role check:", error);
+      }
     }
 
     return NextResponse.next();
