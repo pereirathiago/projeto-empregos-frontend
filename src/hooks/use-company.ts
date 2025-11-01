@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchCurrentCompany, removeAuthToken } from "@/lib/auth";
+import { fetchCurrentCompany, getUserRole, removeAuthToken } from "@/lib/auth";
 import { useCompanyStore } from "@/store/company-store";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -27,6 +27,9 @@ export function useCompany() {
     if (company) return;
 
     try {
+      if (getUserRole() !== "company") {
+        return;
+      }
       setLoading(true);
       setError(null);
       const companyData = await fetchCurrentCompany();
@@ -74,7 +77,7 @@ export function useCompany() {
   }, []);
 
   return {
-    company,
+    user: company,
     isLoading,
     error,
     refetch: fetchCompany,

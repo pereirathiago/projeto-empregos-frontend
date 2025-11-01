@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchCurrentUser, removeAuthToken } from "@/lib/auth";
+import { fetchCurrentUser, getUserRole, removeAuthToken } from "@/lib/auth";
 import { useUserStore } from "@/store/user-store";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,9 @@ export function useUser() {
     try {
       setLoading(true);
       setError(null);
+      if (getUserRole() !== "user") {
+        return;
+      }
       const userData = await fetchCurrentUser();
       setUser(userData);
     } catch (err) {

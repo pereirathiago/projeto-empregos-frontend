@@ -78,13 +78,19 @@ export function getUserId(): string | null {
   return getUserIdFromToken(token);
 }
 
-export function getUserRole(): string | null {
+export function getUserRole(): "user" | "company" | null {
   const token = getAuthToken();
 
   if (!token) return null;
 
   const decoded = decodeToken(token);
-  return decoded?.role ?? null;
+  const role = decoded?.role;
+
+  if (role === "user" || role === "company") {
+    return role;
+  }
+
+  return null;
 }
 
 export async function logout(): Promise<void> {
@@ -147,7 +153,7 @@ export async function fetchCurrentCompany(): Promise<Company> {
   }
 
   const response = await api.get<Company>(`/companies/${companyId}`);
-  
+
   if (response.status === 200) {
     return response.data;
   } else {
@@ -175,7 +181,7 @@ export async function updateCompany(data: UpdateCompanyData): Promise<void> {
   }
 
   const response = await api.patch(`/companies/${companyId}`, data);
-  
+
   if (response.status !== 200) {
     throw new Error("Erro ao atualizar empresa");
   }
@@ -188,8 +194,10 @@ export async function deleteCompany(): Promise<{ message: string }> {
     throw new Error("No company ID found");
   }
 
-  const response = await api.delete<{ message: string }>(`/companies/${companyId}`);
-  
+  const response = await api.delete<{ message: string }>(
+    `/companies/${companyId}`
+  );
+
   if (response.status === 200) {
     return response.data;
   } else {
