@@ -98,7 +98,7 @@ export function RegisterCompanyForm() {
     try {
       const response = await api.post("/companies", validation.data);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast.success(
           "Empresa cadastrada com sucesso! Faça login para continuar."
         );

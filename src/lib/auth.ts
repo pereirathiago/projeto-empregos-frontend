@@ -117,7 +117,7 @@ export async function fetchCurrentUser(): Promise<User> {
 export interface UpdateUserData {
   name: string;
   email?: string;
-  password: string;
+  password?: string;
   phone?: string;
   experience?: string;
   education?: string;
@@ -164,7 +164,7 @@ export async function fetchCurrentCompany(): Promise<Company> {
 export interface UpdateCompanyData {
   name: string;
   business: string;
-  password: string;
+  password?: string;
   street: string;
   number: string;
   city: string;

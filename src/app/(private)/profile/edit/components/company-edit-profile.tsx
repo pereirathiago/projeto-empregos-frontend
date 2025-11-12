@@ -241,7 +241,6 @@ export function CompanyEditProfile() {
                   <InputGroupInput
                     id="password"
                     name="password"
-                    required
                     placeholder="••••••"
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
@@ -349,7 +348,12 @@ export function CompanyEditProfile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefone</Label>
+                <Label htmlFor="phone">
+                  Telefone{" "}
+                  <span className="text-red-500" aria-hidden>
+                    *
+                  </span>
+                </Label>
                 <Input
                   id="phone"
                   name="phone"
@@ -357,6 +361,7 @@ export function CompanyEditProfile() {
                   placeholder="(42) 91234-5678"
                   value={formData.phone}
                   onChange={handleChange}
+                  required
                 />
                 {errors.phone && (
                   <p className="text-sm text-red-600">{errors.phone}</p>
@@ -364,13 +369,19 @@ export function CompanyEditProfile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">
+                  Email{" "}
+                  <span className="text-red-500" aria-hidden>
+                    *
+                  </span>
+                </Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   placeholder="contato@madero.com"
                   value={formData.email}
+                  required
                   onChange={handleChange}
                 />
                 {errors.email && (

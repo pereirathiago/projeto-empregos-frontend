@@ -279,7 +279,6 @@ export function UserEditProfile() {
                       placeholder="••••••"
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
-                      required
                       onChange={handleChange}
                     />
                     <InputGroupAddon align="inline-end">
@@ -338,11 +337,20 @@ export function UserEditProfile() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button type="submit" disabled={isSaving} className="flex-1 cursor-pointer">
+                <Button
+                  type="submit"
+                  disabled={isSaving}
+                  className="flex-1 cursor-pointer"
+                >
                   {isSaving ? <Spinner /> : <Save className="mr-2 h-4 w-4" />}
                   {isSaving ? "Salvando..." : "Salvar Alterações"}
                 </Button>
-                <Button type="button" variant="outline" onClick={handleCancel} className="cursor-pointer">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  className="cursor-pointer"
+                >
                   <X className="mr-2 h-4 w-4" />
                   Cancelar
                 </Button>

@@ -75,11 +75,15 @@ export const updateProfileSchema = z.object({
   }, z.email("Email inválido").optional()),
   password: z
     .string()
-    .min(3, "Senha deve ter no mínimo 3 caracteres")
-    .max(20, "Senha deve ter no máximo 20 caracteres")
-    .regex(
-      PASSWORD_REGEX,
-      "Senha só pode conter letras e números, sem espaços"
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (val.length >= 3 && val.length <= 20 && PASSWORD_REGEX.test(val)),
+      {
+        message:
+          "Senha só pode conter letras e números, sem espaços e deve ter entre 3 e 20 caracteres",
+      }
     ),
   phone: z.preprocess((val) => {
     if (typeof val === "string") {
@@ -174,11 +178,15 @@ export const updateCompanySchema = z.object({
     .max(100, "Ramo de atividade deve ter no máximo 100 caracteres"),
   password: z
     .string()
-    .min(3, "Senha deve ter no mínimo 3 caracteres")
-    .max(20, "Senha deve ter no máximo 20 caracteres")
-    .regex(
-      PASSWORD_REGEX,
-      "Senha só pode conter letras e números, sem espaços"
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (val.length >= 3 && val.length <= 20 && PASSWORD_REGEX.test(val)),
+      {
+        message:
+          "Senha só pode conter letras e números, sem espaços e deve ter entre 3 e 20 caracteres",
+      }
     ),
   street: z
     .string()
