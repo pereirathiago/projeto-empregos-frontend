@@ -10,13 +10,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Job } from "@/lib/validations/jobs";
-import { Briefcase, Building2, Mail, MapPin, Send } from "lucide-react";
+import { Briefcase, Building2, Mail, MapPin, Send, Users } from "lucide-react";
 import Link from "next/link";
 
 interface JobCardProps {
   job: Job;
   showActions?: boolean;
   showApplyButton?: boolean;
+  showCandidatesButton?: boolean;
   onEdit?: (job: Job) => void;
   onDelete?: (job: Job) => void;
   onViewDetails?: (job: Job) => void;
@@ -27,6 +28,7 @@ export function JobCard({
   job,
   showActions,
   showApplyButton,
+  showCandidatesButton,
   onEdit,
   onDelete,
   onViewDetails,
@@ -82,9 +84,9 @@ export function JobCard({
         </div>
       </CardContent>
 
-      <CardFooter className="flex gap-2">
-        {showActions && onEdit && onDelete ? (
-          <>
+      <CardFooter className="flex flex-col gap-2">
+        {showActions && onEdit && onDelete && (
+          <div className="flex gap-2 w-full">
             <Button
               variant="outline"
               size="sm"
@@ -101,9 +103,18 @@ export function JobCard({
             >
               Excluir
             </Button>
-          </>
-        ) : showApplyButton && onApply ? (
-          <>
+          </div>
+        )}
+        {showCandidatesButton && (
+          <Button asChild variant="secondary" size="sm" className="w-full">
+            <Link href={`/jobs/${job.job_id}/candidates`}>
+              <Users className="size-4" />
+              Ver Candidatos
+            </Link>
+          </Button>
+        )}
+        {showApplyButton && onApply && (
+          <div className="flex gap-2 w-full">
             <Button
               variant="outline"
               size="sm"
@@ -116,8 +127,9 @@ export function JobCard({
               <Send className="size-4" />
               Candidatar
             </Button>
-          </>
-        ) : (
+          </div>
+        )}
+        {!showActions && !showApplyButton && !showCandidatesButton && (
           <Button asChild variant="outline" size="sm" className="w-full">
             <Link href={`/jobs/${job.job_id}`}>Ver detalhes</Link>
           </Button>

@@ -155,3 +155,47 @@ export const applyJobSchema = z.object({
 });
 
 export type ApplyJobFormData = z.infer<typeof applyJobSchema>;
+
+// Schema para enviar feedback
+export const sendFeedbackSchema = z.object({
+  user_id: z.number().int().positive("ID do usuário é obrigatório"),
+  message: z
+    .string()
+    .min(10, "Mensagem deve ter no mínimo 10 caracteres")
+    .max(600, "Mensagem deve ter no máximo 600 caracteres"),
+});
+
+export type SendFeedbackFormData = z.infer<typeof sendFeedbackSchema>;
+
+// Interface para candidatura do usuário (com feedback)
+export interface UserApplication {
+  job_id: number;
+  title: string;
+  area: string;
+  description: string;
+  company_name: string;
+  state: string;
+  city: string;
+  salary: number | null;
+  contact: string;
+  applied_at: string | null;
+  feedback: string | null;
+}
+
+export interface UserApplicationsResponse {
+  items: UserApplication[];
+}
+
+// Interface para candidato de uma vaga
+export interface JobCandidate {
+  user_id: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  education: string;
+  experience: string;
+}
+
+export interface JobCandidatesResponse {
+  items: JobCandidate[];
+}

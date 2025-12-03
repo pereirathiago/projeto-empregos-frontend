@@ -87,6 +87,7 @@ export function CompanyDashboard() {
               key={job.job_id}
               job={job}
               showActions
+              showCandidatesButton
               onEdit={handleEdit}
               onDelete={handleDelete}
             />

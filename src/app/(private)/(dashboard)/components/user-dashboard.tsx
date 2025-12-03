@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useJobs } from "@/hooks/use-jobs";
 import {
@@ -7,7 +8,8 @@ import {
   Job,
   JobSearchFilters,
 } from "@/lib/validations/jobs";
-import { Briefcase, Search } from "lucide-react";
+import { Briefcase, ClipboardList, Search } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ApplyJobDialog } from "../../jobs/components/apply-job-dialog";
@@ -54,11 +56,21 @@ export function UserDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Vagas de Emprego</h1>
-        <p className="text-muted-foreground">
-          Encontre as melhores oportunidades para sua carreira
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Vagas de Emprego
+          </h1>
+          <p className="text-muted-foreground">
+            Encontre as melhores oportunidades para sua carreira
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/applications">
+            <ClipboardList className="size-4" />
+            Minhas Candidaturas
+          </Link>
+        </Button>
       </div>
 
       <JobFilters onFilter={handleFilter} isLoading={isLoading} />

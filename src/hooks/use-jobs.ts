@@ -6,9 +6,14 @@ import {
   ApplyJobFormData,
   CreateJobFormData,
   Job,
+  JobCandidate,
+  JobCandidatesResponse,
   JobSearchFilters,
   JobsResponse,
+  SendFeedbackFormData,
   UpdateJobFormData,
+  UserApplication,
+  UserApplicationsResponse,
 } from "@/lib/validations/jobs";
 import { useJobsStore } from "@/store/jobs-store";
 import { AxiosError } from "axios";
@@ -42,6 +47,10 @@ export function useJobs() {
   } = useJobsStore();
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [userApplications, setUserApplications] = useState<UserApplication[]>(
+    []
+  );
+  const [jobCandidates, setJobCandidates] = useState<JobCandidate[]>([]);
   const router = useRouter();
 
   const handleAuthError = useCallback(
@@ -407,10 +416,168 @@ export function useJobs() {
     [handleAuthError, setError, setLoading]
   );
 
+  // Listar candidaturas do usuário logado
+  const getUserApplications = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const userId = getUserId();
+      if (!userId) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        router.push("/sign-in");
+        return [];
+      }
+
+      const role = getUserRole();
+      if (role !== "user") {
+        toast.error("Apenas usuários podem ver suas candidaturas.");
+        return [];
+      }
+
+      const response = await api.get<UserApplicationsResponse>(
+        `/users/${userId}/jobs`
+      );
+
+      setUserApplications(response.data.items || []);
+      return response.data.items || [];
+    } catch (err) {
+      if (err instanceof AxiosError && err.response) {
+        const status = err.response.status;
+        if (handleAuthError(status)) return [];
+
+        if (status === 404) {
+          setUserApplications([]);
+          return [];
+        }
+
+        const errorData = err.response.data as ApiErrorResponse;
+        const message = errorData.message || "Erro ao buscar candidaturas";
+        setError(message);
+        toast.error(message);
+      } else {
+        setError("Erro ao buscar candidaturas");
+        toast.error("Erro ao buscar candidaturas. Tente novamente.");
+      }
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [handleAuthError, router, setError, setLoading]);
+
+  // Listar candidatos de uma vaga (empresa)
+  const getJobCandidates = useCallback(
+    async (jobId: number) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const companyId = getUserId();
+        if (!companyId) {
+          toast.error("Sessão expirada. Faça login novamente.");
+          router.push("/sign-in");
+          return [];
+        }
+
+        const role = getUserRole();
+        if (role !== "company") {
+          toast.error("Apenas empresas podem ver os candidatos.");
+          return [];
+        }
+
+        const response = await api.get<JobCandidatesResponse>(
+          `/companies/${companyId}/jobs/${jobId}`
+        );
+
+        setJobCandidates(response.data.items || []);
+        return response.data.items || [];
+      } catch (err) {
+        if (err instanceof AxiosError && err.response) {
+          const status = err.response.status;
+          if (handleAuthError(status)) return [];
+
+          if (status === 404) {
+            toast.error("Vaga não encontrada");
+            setJobCandidates([]);
+            return [];
+          }
+
+          const errorData = err.response.data as ApiErrorResponse;
+          const message = errorData.message || "Erro ao buscar candidatos";
+          setError(message);
+          toast.error(message);
+        } else {
+          setError("Erro ao buscar candidatos");
+          toast.error("Erro ao buscar candidatos. Tente novamente.");
+        }
+        return [];
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleAuthError, router, setError, setLoading]
+  );
+
+  // Enviar feedback para candidato
+  const sendFeedback = useCallback(
+    async (jobId: number, data: SendFeedbackFormData) => {
+      try {
+        setLoading(true);
+        setError(null);
+        setFormErrors({});
+
+        const role = getUserRole();
+        if (role !== "company") {
+          toast.error("Apenas empresas podem enviar feedback.");
+          return false;
+        }
+
+        await api.post(`/jobs/${jobId}/feedback`, data);
+        toast.success("Feedback enviado com sucesso!");
+        return true;
+      } catch (err) {
+        if (err instanceof AxiosError && err.response) {
+          const status = err.response.status;
+          if (handleAuthError(status)) return false;
+
+          if (status === 404) {
+            toast.error("Vaga ou usuário não encontrado");
+            return false;
+          }
+
+          const errorData = err.response.data as ApiErrorResponse;
+
+          if (status === 422 && errorData.details) {
+            const fieldErrors: Record<string, string> = {};
+            errorData.details.forEach((detail) => {
+              fieldErrors[detail.field] = detail.error;
+            });
+            setFormErrors(fieldErrors);
+            toast.error("Erro de validação. Verifique os campos.");
+            return false;
+          }
+
+          const message = errorData.message || "Erro ao enviar feedback";
+          setError(message);
+          toast.error(message);
+        } else {
+          setError("Erro ao enviar feedback");
+          toast.error("Erro ao enviar feedback. Tente novamente.");
+        }
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleAuthError, setError, setLoading]
+  );
+
   return {
     jobs,
     companyJobs,
     selectedJob,
+    userApplications,
+    jobCandidates,
     isLoading,
     error,
     formErrors,
@@ -422,6 +589,9 @@ export function useJobs() {
     updateJob,
     deleteJob,
     applyToJob,
+    getUserApplications,
+    getJobCandidates,
+    sendFeedback,
     clearJobs,
   };
 }
