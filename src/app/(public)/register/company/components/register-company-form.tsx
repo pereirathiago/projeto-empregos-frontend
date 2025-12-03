@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import api from "@/lib/api";
+import { validateMessageResponse } from "@/lib/api-response-validator";
 import { cn } from "@/lib/utils";
 import {
   registerCompanySchema,
@@ -99,6 +100,7 @@ export function RegisterCompanyForm() {
       const response = await api.post("/companies", validation.data);
 
       if (response.status === 201) {
+        await validateMessageResponse(response.data, "POST /companies");
         toast.success(
           "Empresa cadastrada com sucesso! Faça login para continuar."
         );

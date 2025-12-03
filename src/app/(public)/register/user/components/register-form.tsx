@@ -24,6 +24,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import api from "@/lib/api";
+import { validateMessageResponse } from "@/lib/api-response-validator";
 import { cn } from "@/lib/utils";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import { AxiosError } from "axios";
@@ -93,6 +94,7 @@ export function RegisterForm() {
       const response = await api.post("/users", formData);
 
       if (response.status === 201) {
+        await validateMessageResponse(response.data, "POST /users");
         toast.success("Conta criada com sucesso! Faça login para continuar.");
         router.push("/sign-in");
       } else {

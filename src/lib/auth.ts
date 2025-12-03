@@ -1,5 +1,10 @@
 import { jwtDecode } from "jwt-decode";
 import api from "./api";
+import {
+  validateCompanyResponse,
+  validateMessageResponse,
+  validateUserResponse,
+} from "./api-response-validator";
 
 interface JwtPayload {
   sub: string;
@@ -95,7 +100,10 @@ export function getUserRole(): "user" | "company" | null {
 
 export async function logout(): Promise<void> {
   try {
-    await api.post("/logout");
+    const response = await api.post("/logout");
+    if (response.status === 200) {
+      await validateMessageResponse(response.data, "POST /logout");
+    }
     removeAuthToken();
   } catch (error) {
     console.error("Logout error:", error);
@@ -111,6 +119,9 @@ export async function fetchCurrentUser(): Promise<User> {
   }
 
   const response = await api.get<User>(`/users/${userId}`);
+  if (response.status === 200) {
+    await validateUserResponse(response.data, `GET /users/${userId}`);
+  }
   return response.data;
 }
 
@@ -130,7 +141,10 @@ export async function updateUser(data: UpdateUserData): Promise<void> {
     throw new Error("No user ID found");
   }
 
-  await api.patch(`/users/${userId}`, data);
+  const response = await api.patch(`/users/${userId}`, data);
+  if (response.status === 200) {
+    await validateMessageResponse(response.data, `PATCH /users/${userId}`);
+  }
 }
 
 export async function deleteUser(): Promise<{ message: string }> {
@@ -141,7 +155,9 @@ export async function deleteUser(): Promise<{ message: string }> {
   }
 
   const response = await api.delete<{ message: string }>(`/users/${userId}`);
-
+  if (response.status === 200) {
+    await validateMessageResponse(response.data, `DELETE /users/${userId}`);
+  }
   return response.data;
 }
 
@@ -155,6 +171,7 @@ export async function fetchCurrentCompany(): Promise<Company> {
   const response = await api.get<Company>(`/companies/${companyId}`);
 
   if (response.status === 200) {
+    await validateCompanyResponse(response.data, `GET /companies/${companyId}`);
     return response.data;
   } else {
     throw new Error("Erro ao buscar empresa");
@@ -182,7 +199,12 @@ export async function updateCompany(data: UpdateCompanyData): Promise<void> {
 
   const response = await api.patch(`/companies/${companyId}`, data);
 
-  if (response.status !== 200) {
+  if (response.status === 200) {
+    await validateMessageResponse(
+      response.data,
+      `PATCH /companies/${companyId}`
+    );
+  } else {
     throw new Error("Erro ao atualizar empresa");
   }
 }
@@ -199,6 +221,10 @@ export async function deleteCompany(): Promise<{ message: string }> {
   );
 
   if (response.status === 200) {
+    await validateMessageResponse(
+      response.data,
+      `DELETE /companies/${companyId}`
+    );
     return response.data;
   } else {
     throw new Error("Erro ao deletar empresa");

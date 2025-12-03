@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import api from "@/lib/api";
+import { validateLoginResponse } from "@/lib/api-response-validator";
 import { setAuthToken } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
@@ -88,6 +89,7 @@ export function SigninForm() {
       );
 
       if (response.status === 200) {
+        await validateLoginResponse(response.data, "POST /login");
         setAuthToken(response.data.token);
         toast.success("Login realizado com sucesso!");
         router.push("/");
@@ -181,7 +183,11 @@ export function SigninForm() {
                 )}
               </Field>
               <Field className="gap-2">
-                <Button type="submit" disabled={isLoading} className="cursor-pointer">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="cursor-pointer"
+                >
                   {isLoading && <Spinner />}
                   {isLoading ? "Entrando..." : "Login"}
                 </Button>

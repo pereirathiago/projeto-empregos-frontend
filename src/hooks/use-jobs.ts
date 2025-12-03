@@ -1,6 +1,14 @@
 "use client";
 
 import api from "@/lib/api";
+import {
+  validateCompanyJobsResponse,
+  validateJobCandidatesResponse,
+  validateJobResponse,
+  validateJobsSearchResponse,
+  validateMessageResponse,
+  validateUserApplicationsResponse,
+} from "@/lib/api-response-validator";
 import { getUserId, getUserRole, removeAuthToken } from "@/lib/auth";
 import {
   ApplyJobFormData,
@@ -92,6 +100,10 @@ export function useJobs() {
             : [],
         });
 
+        if (response.status === 200) {
+          await validateJobsSearchResponse(response.data, "POST /jobs/search");
+        }
+
         setJobs(response.data.items || []);
         return response.data.items || [];
       } catch (err) {
@@ -127,6 +139,11 @@ export function useJobs() {
         setError(null);
 
         const response = await api.get<Job>(`/jobs/${jobId}`);
+
+        if (response.status === 200) {
+          await validateJobResponse(response.data, `GET /jobs/${jobId}`);
+        }
+
         setSelectedJob(response.data);
         return response.data;
       } catch (err) {
@@ -191,6 +208,13 @@ export function useJobs() {
           }
         );
 
+        if (response.status === 200) {
+          await validateCompanyJobsResponse(
+            response.data,
+            `POST /companies/${companyId}/jobs`
+          );
+        }
+
         setCompanyJobs(response.data.items || []);
         return response.data.items || [];
       } catch (err) {
@@ -233,7 +257,12 @@ export function useJobs() {
           return false;
         }
 
-        await api.post("/jobs", data);
+        const response = await api.post("/jobs", data);
+
+        if (response.status === 201) {
+          await validateMessageResponse(response.data, "POST /jobs");
+        }
+
         toast.success("Vaga criada com sucesso!");
         return true;
       } catch (err) {
@@ -281,7 +310,12 @@ export function useJobs() {
           return false;
         }
 
-        await api.patch(`/jobs/${jobId}`, data);
+        const response = await api.patch(`/jobs/${jobId}`, data);
+
+        if (response.status === 200) {
+          await validateMessageResponse(response.data, `PATCH /jobs/${jobId}`);
+        }
+
         toast.success("Vaga atualizada com sucesso!");
         return true;
       } catch (err) {
@@ -333,7 +367,12 @@ export function useJobs() {
           return false;
         }
 
-        await api.delete(`/jobs/${jobId}`);
+        const response = await api.delete(`/jobs/${jobId}`);
+
+        if (response.status === 200) {
+          await validateMessageResponse(response.data, `DELETE /jobs/${jobId}`);
+        }
+
         removeJob(jobId);
         toast.success("Vaga deletada com sucesso!");
         return true;
@@ -376,7 +415,12 @@ export function useJobs() {
           return false;
         }
 
-        await api.post(`/jobs/${jobId}`, data);
+        const response = await api.post(`/jobs/${jobId}`, data);
+
+        if (response.status === 200) {
+          await validateMessageResponse(response.data, `POST /jobs/${jobId}`);
+        }
+
         toast.success("Candidatura enviada com sucesso!");
         return true;
       } catch (err) {
@@ -439,6 +483,13 @@ export function useJobs() {
         `/users/${userId}/jobs`
       );
 
+      if (response.status === 200) {
+        await validateUserApplicationsResponse(
+          response.data,
+          `GET /users/${userId}/jobs`
+        );
+      }
+
       setUserApplications(response.data.items || []);
       return response.data.items || [];
     } catch (err) {
@@ -489,6 +540,13 @@ export function useJobs() {
           `/companies/${companyId}/jobs/${jobId}`
         );
 
+        if (response.status === 200) {
+          await validateJobCandidatesResponse(
+            response.data,
+            `GET /companies/${companyId}/jobs/${jobId}`
+          );
+        }
+
         setJobCandidates(response.data.items || []);
         return response.data.items || [];
       } catch (err) {
@@ -532,7 +590,15 @@ export function useJobs() {
           return false;
         }
 
-        await api.post(`/jobs/${jobId}/feedback`, data);
+        const response = await api.post(`/jobs/${jobId}/feedback`, data);
+
+        if (response.status === 200) {
+          await validateMessageResponse(
+            response.data,
+            `POST /jobs/${jobId}/feedback`
+          );
+        }
+
         toast.success("Feedback enviado com sucesso!");
         return true;
       } catch (err) {
