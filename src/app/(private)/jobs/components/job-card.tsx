@@ -10,17 +10,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Job } from "@/lib/validations/jobs";
-import { Briefcase, Building2, Mail, MapPin } from "lucide-react";
+import { Briefcase, Building2, Mail, MapPin, Send } from "lucide-react";
 import Link from "next/link";
 
 interface JobCardProps {
   job: Job;
   showActions?: boolean;
+  showApplyButton?: boolean;
   onEdit?: (job: Job) => void;
   onDelete?: (job: Job) => void;
+  onViewDetails?: (job: Job) => void;
+  onApply?: (job: Job) => void;
 }
 
-export function JobCard({ job, showActions, onEdit, onDelete }: JobCardProps) {
+export function JobCard({
+  job,
+  showActions,
+  showApplyButton,
+  onEdit,
+  onDelete,
+  onViewDetails,
+  onApply,
+}: JobCardProps) {
   const formatSalary = (salary: number | null) => {
     if (!salary) return "A combinar";
     return new Intl.NumberFormat("pt-BR", {
@@ -89,6 +100,21 @@ export function JobCard({ job, showActions, onEdit, onDelete }: JobCardProps) {
               onClick={() => onDelete(job)}
             >
               Excluir
+            </Button>
+          </>
+        ) : showApplyButton && onApply ? (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={() => onViewDetails?.(job)}
+            >
+              Ver detalhes
+            </Button>
+            <Button size="sm" className="flex-1" onClick={() => onApply(job)}>
+              <Send className="size-4" />
+              Candidatar
             </Button>
           </>
         ) : (

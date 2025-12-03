@@ -3,6 +3,7 @@
 import api from "@/lib/api";
 import { getUserId, getUserRole, removeAuthToken } from "@/lib/auth";
 import {
+  ApplyJobFormData,
   CreateJobFormData,
   Job,
   JobSearchFilters,
@@ -194,7 +195,8 @@ export function useJobs() {
           }
 
           const errorData = err.response.data as ApiErrorResponse;
-          const message = errorData.message || "Erro ao buscar vagas da empresa";
+          const message =
+            errorData.message || "Erro ao buscar vagas da empresa";
           setError(message);
           toast.error(message);
         } else {
@@ -352,6 +354,59 @@ export function useJobs() {
     [handleAuthError, removeJob, setError, setLoading]
   );
 
+  const applyToJob = useCallback(
+    async (jobId: number, data: ApplyJobFormData) => {
+      try {
+        setLoading(true);
+        setError(null);
+        setFormErrors({});
+
+        const role = getUserRole();
+        if (role !== "user") {
+          toast.error("Apenas usuários podem se candidatar a vagas.");
+          return false;
+        }
+
+        await api.post(`/jobs/${jobId}`, data);
+        toast.success("Candidatura enviada com sucesso!");
+        return true;
+      } catch (err) {
+        if (err instanceof AxiosError && err.response) {
+          const status = err.response.status;
+          if (handleAuthError(status)) return false;
+
+          if (status === 404) {
+            toast.error("Vaga não encontrada");
+            return false;
+          }
+
+          const errorData = err.response.data as ApiErrorResponse;
+
+          if (status === 422 && errorData.details) {
+            const fieldErrors: Record<string, string> = {};
+            errorData.details.forEach((detail) => {
+              fieldErrors[detail.field] = detail.error;
+            });
+            setFormErrors(fieldErrors);
+            toast.error("Erro de validação. Verifique os campos.");
+            return false;
+          }
+
+          const message = errorData.message || "Erro ao se candidatar";
+          setError(message);
+          toast.error(message);
+        } else {
+          setError("Erro ao se candidatar");
+          toast.error("Erro ao se candidatar. Tente novamente.");
+        }
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleAuthError, setError, setLoading]
+  );
+
   return {
     jobs,
     companyJobs,
@@ -366,6 +421,7 @@ export function useJobs() {
     createJob,
     updateJob,
     deleteJob,
+    applyToJob,
     clearJobs,
   };
 }

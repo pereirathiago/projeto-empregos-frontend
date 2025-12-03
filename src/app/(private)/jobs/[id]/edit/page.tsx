@@ -3,7 +3,13 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useJobs } from "@/hooks/use-jobs";
 import { getUserRole } from "@/lib/auth";
-import { CreateJobFormData, JobArea, JOB_AREAS } from "@/lib/validations/jobs";
+import {
+  BRAZILIAN_STATES,
+  BrazilianState,
+  CreateJobFormData,
+  JOB_AREAS,
+  JobArea,
+} from "@/lib/validations/jobs";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -12,8 +18,14 @@ import { JobForm } from "../../components/job-form";
 export default function EditJobPage() {
   const params = useParams();
   const jobId = Number(params.id);
-  const { selectedJob, getJobById, updateJob, isLoading, formErrors, setFormErrors } =
-    useJobs();
+  const {
+    selectedJob,
+    getJobById,
+    updateJob,
+    isLoading,
+    formErrors,
+    setFormErrors,
+  } = useJobs();
   const [role, setRole] = useState<"user" | "company" | null>(null);
   const [isLoadingJob, setIsLoadingJob] = useState(true);
   const router = useRouter();
@@ -77,7 +89,9 @@ export default function EditJobPage() {
       ? (selectedJob.area as JobArea)
       : undefined,
     description: selectedJob.description,
-    state: selectedJob.state,
+    state: BRAZILIAN_STATES.includes(selectedJob.state as BrazilianState)
+      ? (selectedJob.state as BrazilianState)
+      : undefined,
     city: selectedJob.city,
     salary: selectedJob.salary ?? undefined,
   };

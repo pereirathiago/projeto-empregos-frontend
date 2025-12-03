@@ -3,7 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { JOB_AREAS, JobSearchFilters } from "@/lib/validations/jobs";
+import {
+  BRAZILIAN_STATES,
+  JOB_AREAS,
+  JobSearchFilters,
+} from "@/lib/validations/jobs";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 
@@ -117,13 +121,20 @@ export function JobFilters({
 
         <div className="space-y-2">
           <Label htmlFor="state">Estado</Label>
-          <Input
+          <select
             id="state"
             name="state"
-            placeholder="Ex: PR, SP..."
             value={filters.state}
             onChange={handleChange}
-          />
+            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="">Todos os estados</option>
+            {BRAZILIAN_STATES.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="space-y-2">

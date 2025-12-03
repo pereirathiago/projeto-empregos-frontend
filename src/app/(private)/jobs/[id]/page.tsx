@@ -11,23 +11,29 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useJobs } from "@/hooks/use-jobs";
 import { getUserRole } from "@/lib/auth";
+import { ApplyJobFormData } from "@/lib/validations/jobs";
 import {
   ArrowLeft,
   Briefcase,
   Building2,
   Mail,
   MapPin,
+  Send,
   Tag,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ApplyJobDialog } from "../components/apply-job-dialog";
 
 export default function JobDetailsPage() {
   const params = useParams();
   const jobId = Number(params.id);
-  const { selectedJob, getJobById, isLoading } = useJobs();
+  const { selectedJob, getJobById, applyToJob, isLoading, formErrors } =
+    useJobs();
   const [role, setRole] = useState<"user" | "company" | null>(null);
+  const [showApplyDialog, setShowApplyDialog] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
 
   useEffect(() => {
     const userRole = getUserRole();
@@ -46,6 +52,13 @@ export default function JobDetailsPage() {
       style: "currency",
       currency: "BRL",
     }).format(salary);
+  };
+
+  const handleApply = async (data: ApplyJobFormData) => {
+    setIsApplying(true);
+    const success = await applyToJob(jobId, data);
+    setIsApplying(false);
+    return success;
   };
 
   if (!role) {
@@ -123,7 +136,9 @@ export default function JobDetailsPage() {
               <Briefcase className="size-5 text-muted-foreground" />
               <div>
                 <p className="text-sm text-muted-foreground">Salário</p>
-                <p className="font-medium">{formatSalary(selectedJob.salary)}</p>
+                <p className="font-medium">
+                  {formatSalary(selectedJob.salary)}
+                </p>
               </div>
             </div>
 
@@ -143,8 +158,18 @@ export default function JobDetailsPage() {
             </p>
           </div>
 
-          <div className="pt-4 border-t">
-            <Button asChild size="lg" className="w-full md:w-auto">
+          <div className="pt-4 border-t flex flex-col sm:flex-row gap-3">
+            {role === "user" && (
+              <Button size="lg" onClick={() => setShowApplyDialog(true)}>
+                <Send className="size-4" />
+                Candidatar-se
+              </Button>
+            )}
+            <Button
+              asChild
+              size="lg"
+              variant={role === "user" ? "outline" : "default"}
+            >
               <a href={`mailto:${selectedJob.contact}`}>
                 <Mail className="size-4" />
                 Enviar currículo por email
@@ -153,6 +178,17 @@ export default function JobDetailsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {role === "user" && (
+        <ApplyJobDialog
+          job={selectedJob}
+          open={showApplyDialog}
+          onOpenChange={setShowApplyDialog}
+          onSubmit={handleApply}
+          isLoading={isApplying}
+          formErrors={formErrors}
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,37 @@
 import { z } from "zod";
 
+export const BRAZILIAN_STATES = [
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MS",
+  "MT",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
+] as const;
+
+export type BrazilianState = (typeof BRAZILIAN_STATES)[number];
+
 export const JOB_AREAS = [
   "Administração",
   "Agricultura",
@@ -41,22 +73,18 @@ export const createJobSchema = z.object({
     .string()
     .min(10, "Descrição deve ter no mínimo 10 caracteres")
     .max(5000, "Descrição deve ter no máximo 5000 caracteres"),
-  state: z.string().min(1, "Estado é obrigatório"),
+  state: z.enum(BRAZILIAN_STATES, {
+    message: "Selecione um estado válido",
+  }),
   city: z.string().min(1, "Cidade é obrigatória"),
-  salary: z.preprocess(
-    (val) => {
-      if (val === "" || val === undefined || val === null) return undefined;
-      if (typeof val === "string") {
-        const parsed = parseFloat(val.replace(",", "."));
-        return isNaN(parsed) ? undefined : parsed;
-      }
-      return val;
-    },
-    z
-      .number()
-      .positive("Salário deve ser maior que zero")
-      .optional()
-  ),
+  salary: z.preprocess((val) => {
+    if (val === "" || val === undefined || val === null) return undefined;
+    if (typeof val === "string") {
+      const parsed = parseFloat(val.replace(",", "."));
+      return isNaN(parsed) ? undefined : parsed;
+    }
+    return val;
+  }, z.number().positive("Salário deve ser maior que zero").optional()),
 });
 
 export type CreateJobFormData = z.infer<typeof createJobSchema>;
@@ -96,3 +124,34 @@ export interface Job {
 export interface JobsResponse {
   items: Job[];
 }
+
+export const applyJobSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .max(150, "Nome deve ter no máximo 150 caracteres"),
+  email: z.preprocess((val) => {
+    if (typeof val === "string") {
+      const trimmed = val.trim();
+      return trimmed === "" ? undefined : trimmed;
+    }
+    return val;
+  }, z.string().email("Email inválido").optional()),
+  phone: z.preprocess((val) => {
+    if (typeof val === "string") {
+      const trimmed = val.trim();
+      return trimmed === "" ? undefined : trimmed;
+    }
+    return val;
+  }, z.string().min(10, "Telefone deve ter entre 10 e 14 dígitos").max(14, "Telefone deve ter entre 10 e 14 dígitos").optional()),
+  education: z
+    .string()
+    .min(1, "Formação é obrigatória")
+    .max(600, "Formação deve ter no máximo 600 caracteres"),
+  experience: z
+    .string()
+    .min(1, "Experiência é obrigatória")
+    .max(600, "Experiência deve ter no máximo 600 caracteres"),
+});
+
+export type ApplyJobFormData = z.infer<typeof applyJobSchema>;

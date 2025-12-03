@@ -13,9 +13,10 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  BRAZILIAN_STATES,
   CreateJobFormData,
-  JOB_AREAS,
   createJobSchema,
+  JOB_AREAS,
 } from "@/lib/validations/jobs";
 import { Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -43,7 +44,7 @@ export function JobForm({
     title: initialData?.title || "",
     area: initialData?.area || ("" as CreateJobFormData["area"]),
     description: initialData?.description || "",
-    state: initialData?.state || "",
+    state: initialData?.state || ("" as CreateJobFormData["state"]),
     city: initialData?.city || "",
     salary: initialData?.salary,
   });
@@ -173,7 +174,9 @@ export function JobForm({
                   required
                 />
                 {allErrors.description && (
-                  <p className="text-sm text-red-600">{allErrors.description}</p>
+                  <p className="text-sm text-red-600">
+                    {allErrors.description}
+                  </p>
                 )}
               </div>
 
@@ -185,15 +188,21 @@ export function JobForm({
                       *
                     </span>
                   </Label>
-                  <Input
+                  <select
                     id="state"
                     name="state"
-                    type="text"
-                    placeholder="Ex: PR"
                     value={formData.state}
                     onChange={handleChange}
                     required
-                  />
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">Selecione um estado</option>
+                    {BRAZILIAN_STATES.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
                   {allErrors.state && (
                     <p className="text-sm text-red-600">{allErrors.state}</p>
                   )}
