@@ -3,26 +3,41 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useJobs } from "@/hooks/use-jobs";
+import { getUserRole } from "@/lib/auth";
 import { Job, JobSearchFilters } from "@/lib/validations/jobs";
 import { Briefcase, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DeleteJobDialog } from "../../jobs/components/delete-job-dialog";
-import { JobCard } from "../../jobs/components/job-card";
-import { JobFilters } from "../../jobs/components/job-filters";
+import { toast } from "sonner";
+import { DeleteJobDialog } from "../components/delete-job-dialog";
+import { JobCard } from "../components/job-card";
+import { JobFilters } from "../components/job-filters";
 
-export function CompanyDashboard() {
+export default function CompanyJobsPage() {
   const { companyJobs, isLoading, getCompanyJobs, deleteJob } = useJobs();
+  const [role, setRole] = useState<"user" | "company" | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    getCompanyJobs();
-    setHasSearched(true);
-  }, [getCompanyJobs]);
+    const userRole = getUserRole();
+    setRole(userRole);
+
+    if (userRole !== "company") {
+      toast.error("Apenas empresas podem acessar esta página");
+      router.push("/jobs");
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (role === "company") {
+      getCompanyJobs();
+      setHasSearched(true);
+    }
+  }, [role, getCompanyJobs]);
 
   const handleFilter = async (filters: JobSearchFilters) => {
     await getCompanyJobs(filters);
@@ -48,6 +63,10 @@ export function CompanyDashboard() {
       setJobToDelete(null);
     }
   };
+
+  if (!role || role !== "company") {
+    return null;
+  }
 
   return (
     <div className="space-y-6">
